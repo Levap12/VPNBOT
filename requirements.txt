@@ -1,0 +1,9 @@
+databases~=0.9.0
+SQLAlchemy~=2.0.30
+marzpy~=0.0.5
+aiohttp~=3.9.5
+python-dotenv~=1.0.1
+python-dateutil~=2.9.0.post0
+fastapi~=0.111.0
+pydantic~=2.7.1
+aiogram~=3.5.0
