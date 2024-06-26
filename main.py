@@ -48,4 +48,5 @@ app.on_shutdown.append(on_shutdown)
 app.router.add_post('/webhook', handle_update)
 
 if __name__ == '__main__':
+    print('asd')
     web.run_app(app, host='0.0.0.0', port=int(os.getenv('PORT', 3000)))
