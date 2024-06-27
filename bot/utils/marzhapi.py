@@ -11,10 +11,10 @@ from dateutil.relativedelta import relativedelta
 load_dotenv('.env')
 LOGIN = os.getenv("MARZH_LOGIN")
 PASS = os.getenv("MARZH_PWD")
-
+PANEL_URL = os.getenv("PANEL_URL")
 
 async def get_panel_and_token():
-    panel = Marzban(LOGIN, PASS, "https://vm13139.vpsone.xyz")
+    panel = Marzban(LOGIN, PASS, PANEL_URL)
     token = await panel.get_token()
     return panel, token
 
