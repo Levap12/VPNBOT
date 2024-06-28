@@ -1,0 +1,10 @@
+version: '3'
+services:
+  mytgbot:
+    build: .
+    image: vpntgbot
+    container_name: vpnbot
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
