@@ -45,7 +45,7 @@ async def handle_update(request: web.Request):
 app = web.Application()
 app.on_startup.append(on_startup)
 app.on_shutdown.append(on_shutdown)
-app.router.add_post('/webhook', handle_update)
+app.router.add_post('/bot', handle_update)
 
 if __name__ == '__main__':
     web.run_app(app, host='127.0.0.1', port=int(os.getenv('PORT', 3000)))
