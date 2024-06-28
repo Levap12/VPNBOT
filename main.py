@@ -40,12 +40,13 @@ async def handle_update(request: web.Request):
     update = Update(**await request.json())
     await dp.process_update(update)
     return web.Response()
-
+async def handle(request):
+    return web.Response(text="Webhook received")
 
 app = web.Application()
 app.on_startup.append(on_startup)
 app.on_shutdown.append(on_shutdown)
-app.router.add_post('/bot', handle_update)
+app.router.add_post('/bot', handle)
 
 if __name__ == '__main__':
     web.run_app(app, host='0.0.0.0', port=int(os.getenv('PORT', 3000)))
