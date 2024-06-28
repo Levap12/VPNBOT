@@ -38,7 +38,7 @@ async def handle_update(request: web.Request):
     dp = request.app['dp']
 
     update = Update(**await request.json())
-    await dp.process_update(update)
+    await dp.process_updates(update)
     return web.Response()
 async def handle(request):
     return web.Response(text="Webhook received")
