@@ -9,7 +9,6 @@ from aiogram.types import Update
 from bot.handlers.user_handlers import command_router
 from bot.handlers.callbacks import callback_router
 
-
 async def on_startup(app: web.Application):
     load_dotenv('.env')
 
@@ -26,22 +25,25 @@ async def on_startup(app: web.Application):
     app['bot'] = bot
     app['dp'] = dp
 
-
 async def on_shutdown(app: web.Application):
     bot = app['bot']
     await bot.delete_webhook()
     await bot.session.close()
 
-
 async def handle_update(request: web.Request):
     bot = request.app['bot']
     dp = request.app['dp']
 
-    update = Update(**await request.json())
-    await dp.process_updates(update)
+    try:
+        data = await request.json()
+        update = Update(**data)
+        await dp.feed_update(bot, update)
+    except Exception as e:
+        # Логирование ошибок для отладки
+        print(f"Failed to process update: {e}")
+        return web.Response(status=400, text="Invalid JSON")
+
     return web.Response()
-async def handle(request):
-    return web.Response(text="Webhook received")
 
 app = web.Application()
 app.on_startup.append(on_startup)
