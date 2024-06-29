@@ -92,12 +92,19 @@ async def get_user_info(user_id):
 
     # Дата окончания подписки
     expire_timestamp = user_data.expire
-    expire_date = datetime.utcfromtimestamp(expire_timestamp)
-    expire_formatted = expire_date.strftime('%d.%m.%Y')
 
-    # Осталось дней
-    now = datetime.utcnow()
-    remaining_days = (expire_date - now).days if expire_date > now else 0
+    if expire_timestamp is None:
+        # Если подписка бесконечна
+        expire_formatted = "∞"
+        remaining_days = "∞"  # или другое значение, чтобы обозначить бесконечность
+    else:
+        # Если подписка имеет срок окончания
+        expire_date = datetime.utcfromtimestamp(expire_timestamp)
+        expire_formatted = expire_date.strftime('%d.%m.%Y')
+
+        # Осталось дней
+        now = datetime.utcnow()
+        remaining_days = (expire_date - now).days if expire_date > now else 0
 
     return {
         "subscription_status": subscription_status,
