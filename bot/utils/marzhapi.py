@@ -77,8 +77,8 @@ async def crate_trial(user_id: int):
     except ClientResponseError as e:
         if e.status == 409:
             result = await panel.get_user(str(user_id), token=token)
-            print(result.links[0])
-            return result.links[0]
+            print(result.subscription_url)
+            return f"{PANEL_URL}{result.subscription_url}"
         else:
             raise e
 
