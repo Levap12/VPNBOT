@@ -1,5 +1,6 @@
 import asyncio
 
+from aiocache import cached
 from marzpy import Marzban
 from marzpy.api.user import User
 from datetime import datetime, timedelta
@@ -13,13 +14,19 @@ LOGIN = os.getenv("MARZH_LOGIN")
 PASS = os.getenv("MARZH_PWD")
 PANEL_URL = os.getenv("PANEL_URL")
 
+
+@cached(ttl=600)  # Кэшировать на 600 секунд (10 минут)
+async def get_cached_panel_and_token():
+    return await get_panel_and_token()
+
+
 async def get_panel_and_token():
     panel = Marzban(LOGIN, PASS, PANEL_URL)
     token = await panel.get_token()
     return panel, token
 
-async def extend_expire(user_id, months):
 
+async def extend_expire(user_id:int, months):
     panel, token = await get_panel_and_token()
     # print(token,LOGIN, PASS)
     # Получить текущие данные пользователя
@@ -27,7 +34,10 @@ async def extend_expire(user_id, months):
 
     # Проверить текущий срок действия подписки
     current_expire_timestamp = user_data.expire
-    current_expire_time = datetime.utcfromtimestamp(current_expire_timestamp)
+    if current_expire_timestamp is None:
+        current_expire_time = datetime.utcnow()
+    else:
+        current_expire_time = datetime.utcfromtimestamp(current_expire_timestamp)
     now = datetime.utcnow()
 
     # Определить новую дату истечения срока действия
@@ -84,7 +94,7 @@ async def crate_trial(user_id: int):
 
 
 async def get_user_info(user_id):
-    panel, token = await get_panel_and_token()
+    panel, token = await get_cached_panel_and_token()
     user_data = await panel.get_user(str(user_id), token=token)
 
     # Статус подписки
@@ -113,11 +123,11 @@ async def get_user_info(user_id):
     }
 
 
-async def main():
-    result = await extend_expire("452398375",1)
-    print(result.expire)
-    # result = await crate_shadow_trial("1231231")
-    # print(result)
+# async def main():
+#     result = await extend_expire("452398375",1)
+#     print(result.expire)
+#     # result = await crate_shadow_trial("1231231")
+#     # print(result)
 
 
     # username = 'levap12'
