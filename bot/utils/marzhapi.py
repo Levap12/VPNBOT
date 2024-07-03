@@ -15,11 +15,7 @@ PASS = os.getenv("MARZH_PWD")
 PANEL_URL = os.getenv("PANEL_URL")
 
 
-@cached(ttl=600)  # Кэшировать на 600 секунд (10 минут)
-async def get_cached_panel_and_token():
-    return await get_panel_and_token()
-
-
+@cached(ttl=600)
 async def get_panel_and_token():
     panel = Marzban(LOGIN, PASS, PANEL_URL)
     token = await panel.get_token()
@@ -28,7 +24,6 @@ async def get_panel_and_token():
 
 async def extend_expire(user_id:int, months):
     panel, token = await get_panel_and_token()
-    # print(token,LOGIN, PASS)
     # Получить текущие данные пользователя
     user_data = await panel.get_user(str(user_id), token=token)
 
@@ -65,7 +60,7 @@ async def extend_expire(user_id:int, months):
     return result
 
 
-async def crate_trial(user_id: int):
+async def crate_user(user_id: int):
     panel, token = await get_panel_and_token()
     expire_time = datetime.utcnow() + timedelta(days=3)  # Установка времени истечения срока действия на 1 день
     expire_timestamp = int(expire_time.timestamp())
@@ -94,7 +89,7 @@ async def crate_trial(user_id: int):
 
 
 async def get_user_info(user_id):
-    panel, token = await get_cached_panel_and_token()
+    panel, token = await get_panel_and_token()
     user_data = await panel.get_user(str(user_id), token=token)
 
     # Статус подписки

@@ -82,8 +82,6 @@ def get_vless_con_kb() -> InlineKeyboardMarkup:
     # Главгвное меню
 
     ikb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text='🚀️ Быстрое подключение', callback_data='fast_connect')],
-        [InlineKeyboardButton(text='🚀️ Инструкция', callback_data='instruction')],
-        [InlineKeyboardButton(text='Главное меню', callback_data='back_to_menu')],
+        [InlineKeyboardButton(text='Главное меню', callback_data='back_to_menu')]
     ])
     return ikb

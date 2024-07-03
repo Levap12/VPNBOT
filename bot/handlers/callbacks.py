@@ -46,9 +46,9 @@ async def profile_cb(callback: CallbackQuery):
 async def back_to_main_cb(callback: CallbackQuery):
     main_menu = 'Nock VPN — безопасная защита для вашей онлайн-жизни.\n' \
                 '\n' \
-                '🔥 Приобретайте подписку Nock VPN от 100₽\n' \
+                '🔥 Приобретайте подписку Nock VPN от 200₽\n' \
                 '\n' \
-                '⚡️ Если Вы хотите протестировать VPN, жмите на кнопку «Тестовый период»\n' \
+                '⚡️ Подключайтесь к VPN, жмите на кнопку «Подключится»\n' \
                 '\n' \
                 'Вы можете управлять ботом следующими командами:'
 
@@ -124,7 +124,7 @@ async def trial_shadowsocks_cb(callback: CallbackQuery):
 
 @callback_router.callback_query(F.data == 'vless')
 async def trial_vless_cb(callback: CallbackQuery):
-    link = await marzhapi.crate_trial(callback.from_user.id)
+    link = await marzhapi.crate_user(callback.from_user.id)
     text = '🪐 Подключение к VPN:' \
            '\n' \
            f'\n<code>{link}</code>' \

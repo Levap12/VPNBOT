@@ -7,3 +7,8 @@ services:
       - "3000:3000"
     env_file:
       - .env
+  fastapi:
+    build:
+      context: ./fastapi_app
+    ports:
+      - "3050:3050"
