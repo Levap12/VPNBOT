@@ -5,6 +5,7 @@ from aiogram.filters import CommandStart,Command
 from bot.utils import marzhapi
 command_router = Router()
 
+
 @command_router.message(CommandStart())
 async def cmd_start(message: Message):
     main_menu = f'🖖 Привет {message.from_user.first_name}!' \
