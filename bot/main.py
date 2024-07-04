@@ -6,8 +6,8 @@ from dotenv import load_dotenv
 from aiogram import Bot, Dispatcher
 from aiogram.types import Update
 
-from bot.handlers.user_handlers import command_router
-from bot.handlers.callbacks import callback_router
+from handlers.user_handlers import command_router
+from handlers.callbacks import callback_router
 
 async def on_startup(app: web.Application):
     load_dotenv('../.env')
