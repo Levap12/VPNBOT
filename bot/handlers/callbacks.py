@@ -6,7 +6,7 @@ from bot.handlers.user_handlers import cmd_start
 import os
 from datetime import datetime, timedelta
 from bot.utils import marzhapi
-
+import asyncio
 callback_router = Router()
 
 # @callback_router.callback_query(F.data == 'first_connect')
@@ -18,6 +18,26 @@ callback_router = Router()
 #            '\n👆 Нажмите чтобы скопировать!'
 #
 #     await callback.message.edit_text(text=text, reply_markup=user_keyboards.get_firstmsg_kb(), parse_mode='HTML')
+
+user_last_interaction = {}
+async def handle_message_edit(callback: CallbackQuery, new_text: str, new_reply_markup):
+    user_id = callback.from_user.id
+    current_time = asyncio.get_event_loop().time()
+
+    # Проверка, что прошло достаточно времени с последнего взаимодействия
+    if user_id in user_last_interaction:
+        last_time = user_last_interaction[user_id]
+        if current_time - last_time < .5:  # Например, 1 секунда
+            await callback.answer("Подождите немного перед следующим нажатием.")
+            return
+
+    user_last_interaction[user_id] = current_time
+
+    # Проверка, изменился ли текст сообщения или его разметка
+    if callback.message.text != new_text or callback.message.reply_markup != new_reply_markup:
+        await callback.message.edit_text(text=new_text, reply_markup=new_reply_markup, parse_mode='HTML', disable_web_page_preview=True)
+    else:
+        await callback.answer("Сообщение не изменено.")
 
 
 @callback_router.callback_query(F.data == 'profile')
@@ -37,7 +57,7 @@ async def profile_cb(callback: CallbackQuery):
            f'├ Осталось дней: {user_info["remaining_days"]}\n' \
            f'└ Активна до: {user_info["expire_date"]}'#├└
 
-    await callback.message.edit_text(text=text,reply_markup=user_keyboards.get_profile_kb(),parse_mode='HTML')
+    await handle_message_edit(callback, text, user_keyboards.get_profile_kb())
 
 
 @callback_router.callback_query(F.data == 'back_to_menu')
@@ -50,7 +70,7 @@ async def back_to_main_cb(callback: CallbackQuery):
                 '\n' \
                 'Вы можете управлять ботом следующими командами:'
 
-    await callback.message.edit_text(text=main_menu,reply_markup=user_keyboards.get_main_kb())
+    await handle_message_edit(callback, main_menu, user_keyboards.get_main_kb())
 
 
 @callback_router.callback_query(F.data == 'buyvpn')
@@ -63,7 +83,7 @@ async def buyvpn_cb(callback: CallbackQuery):
            '\nVisa, MasterCard, МИР и криптовалюты.'
 
 
-    await callback.message.edit_text(text=text,reply_markup=user_keyboards.get_buyvpn_kb())
+    await handle_message_edit(callback, text, user_keyboards.get_buyvpn_kb())
 
 
 async def handle_subscription(callback: CallbackQuery, months: int):
@@ -78,7 +98,7 @@ async def handle_subscription(callback: CallbackQuery, months: int):
     crypto_payment_url = f'https://crypto-payment.example.com/{months}_months'  # Замените на реальную ссылку
 
     text = f'Доступ на {months} {month_text}'
-    await callback.message.edit_text(text=text, reply_markup=user_keyboards.get_payment_kb(months, payment_url, crypto_payment_url))
+    await handle_message_edit(callback, text, user_keyboards.get_payment_kb(months, payment_url, crypto_payment_url))
 
 
 @callback_router.callback_query(F.data.startswith('test_payment_'))
@@ -96,7 +116,7 @@ async def test_payment_cb(callback: CallbackQuery):
     await marzhapi.extend_expire(callback.from_user.id,months)
 
     text = f'Оплата за {months} {month_text} успешно выполнена! Спасибо за покупку.'
-    await callback.message.edit_text(text=text,reply_markup=user_keyboards.get_mainmenu_kb())
+    await handle_message_edit(callback, text, user_keyboards.get_mainmenu_kb())
 
 
 # Обработчики для каждого периода подписки
@@ -117,7 +137,7 @@ async def buyvpn_6_cb(callback: CallbackQuery):
 async def trial_shadowsocks_cb(callback: CallbackQuery):
     text = 'Выберите тип подключения 👇\n' \
            'Рекомендуем Vless'
-    await callback.message.edit_text(text=text, reply_markup=user_keyboards.get_connect_kb())
+    await handle_message_edit(callback, text, user_keyboards.get_connect_kb())
 
 
 @callback_router.callback_query(F.data == 'vless')
@@ -138,7 +158,7 @@ async def trial_vless_cb(callback: CallbackQuery):
            '\n⭐️ Если у вас Android(v2rayNG) - нажмите в приложении "..." - Обновить подписку' \
            '\n' \
            '\nПосмотреть подробную инструкцию 👇'
-    await callback.message.edit_text(text=text, reply_markup=user_keyboards.get_vless_con_kb(), parse_mode='HTML',disable_web_page_preview=True)
+    await handle_message_edit(callback, text, user_keyboards.get_vless_con_kb())
 
 
 
