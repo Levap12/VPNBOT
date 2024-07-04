@@ -10,7 +10,7 @@ from bot.handlers.user_handlers import command_router
 from bot.handlers.callbacks import callback_router
 
 async def on_startup(app: web.Application):
-    load_dotenv('.env')
+    load_dotenv('../.env')
 
     token = os.getenv("TOKEN_TG")
     bot = Bot(token)

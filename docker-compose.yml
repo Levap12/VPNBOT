@@ -1,14 +1,24 @@
-version: '3'
+version: '3.8'
+
 services:
   mytgbot:
-    build: .
+    build:
+      context: .
     container_name: nocktgbot
+    command: python /app/bot/main.py
+    volumes:
+      - .:/app
     ports:
       - "3000:3000"
     env_file:
       - .env
+
   fastapi:
     build:
-      context: ./fastapi_app
+      context: .
+    container_name: fastapi
+    command: uvicorn fastapi_app.main:app --host 0.0.0.0 --port 8000
+    volumes:
+      - .:/app
     ports:
-      - "3050:3050"
+      - "3050:8000"

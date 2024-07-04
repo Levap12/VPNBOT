@@ -3,13 +3,11 @@ from aiogram.filters import CommandStart,Command
 from aiogram.types import Message, CallbackQuery
 from bot.keyboards import user_keyboards
 from bot.handlers.user_handlers import cmd_start
-from dotenv import load_dotenv
 import os
 from datetime import datetime, timedelta
 from bot.utils import marzhapi
 
 callback_router = Router()
-load_dotenv('.env')
 
 # @callback_router.callback_query(F.data == 'first_connect')
 # async def first_connect(callback: CallbackQuery):

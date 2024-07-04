@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 import os
 from dateutil.relativedelta import relativedelta
 
-load_dotenv('.env')
+load_dotenv('../.env')
 LOGIN = os.getenv("MARZH_LOGIN")
 PASS = os.getenv("MARZH_PWD")
 PANEL_URL = os.getenv("PANEL_URL")
