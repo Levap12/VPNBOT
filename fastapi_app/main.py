@@ -15,9 +15,12 @@ app = FastAPI()
 
 @app.get("/sub/{user_id}")
 async def redirect_user(user_id):
-# Сделать запрос к сервису для получения конечного URL
-    redirect_url = await get_user_sub(decode(user_id))
-    return RedirectResponse(url=redirect_url)
+    try:
+        # Сделать запрос к сервису для получения конечного URL
+        redirect_url = await get_user_sub(decode(user_id))
+        return RedirectResponse(url=redirect_url)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 if __name__ == "__main__":

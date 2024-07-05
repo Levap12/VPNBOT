@@ -4,7 +4,7 @@ from aiocache import cached
 from marzpy import Marzban
 from marzpy.api.user import User
 from datetime import datetime, timedelta
-from aiohttp.client_exceptions import ClientResponseError
+from aiohttp.client_exceptions import ClientResponseError,ClientError, InvalidURL
 from dotenv import load_dotenv
 import os
 from dateutil.relativedelta import relativedelta
@@ -18,8 +18,11 @@ PANEL_URL = os.getenv("PANEL_URL")
 @cached(ttl=600)
 async def get_panel_and_token():
     panel = Marzban(LOGIN, PASS, PANEL_URL)
-    token = await panel.get_token()
-    return panel, token
+    try:
+        token = await panel.get_token()
+        return panel, token
+    except (ClientError, InvalidURL) as ex:
+        raise Exception(f"Failed to get token: {ex}")
 
 async def get_user_sub(user_id:int):
     panel, token = await get_panel_and_token()
