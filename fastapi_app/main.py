@@ -1,26 +1,22 @@
+import os
+
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import RedirectResponse
 import httpx
-import bot.utils.marzhapi
 
+from bot.utils.base64coding import decode
+from dotenv import load_dotenv
+
+from bot.utils.marzhapi import get_user_sub
+
+load_dotenv('../.env')
+SUB_URL = os.getenv("SUB_URL")
 app = FastAPI()
 
-SERVICE_URL = "https://example.com/get_redirect_url"  # URL вашего сервиса для получения конечного URL
-
-
 @app.get("/sub/{user_id}")
-async def redirect_user(user_id: int):
-    # Сделать запрос к сервису для получения конечного URL
-    async with httpx.AsyncClient() as client:
-        response = await client.get(f"{SERVICE_URL}?user_id={user_id}")
-        if response.status_code != 200:
-            raise HTTPException(status_code=400, detail="Failed to fetch redirect URL")
-
-        redirect_url = response.json().get("redirect_url")
-        if not redirect_url:
-            raise HTTPException(status_code=400, detail="No redirect URL found")
-
-    # Вернуть редирект на полученный URL
+async def redirect_user(user_id):
+# Сделать запрос к сервису для получения конечного URL
+    redirect_url = await get_user_sub(decode(user_id))
     return RedirectResponse(url=redirect_url)
 
 

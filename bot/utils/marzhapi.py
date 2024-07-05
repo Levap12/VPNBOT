@@ -21,6 +21,10 @@ async def get_panel_and_token():
     token = await panel.get_token()
     return panel, token
 
+async def get_user_sub(user_id:int):
+    panel, token = await get_panel_and_token()
+    result = await panel.get_user(str(user_id), token=token)
+    return f"{PANEL_URL}{result.subscription_url}"
 
 async def extend_expire(user_id:int, months):
     panel, token = await get_panel_and_token()

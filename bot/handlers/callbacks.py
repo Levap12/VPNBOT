@@ -8,6 +8,11 @@ from datetime import datetime, timedelta
 from bot.utils import marzhapi
 import asyncio
 callback_router = Router()
+from bot.utils.base64coding import encode
+from dotenv import load_dotenv
+
+load_dotenv('../.env')
+SUB_URL = os.getenv("SUB_URL")
 
 # @callback_router.callback_query(F.data == 'first_connect')
 # async def first_connect(callback: CallbackQuery):
@@ -142,10 +147,9 @@ async def trial_shadowsocks_cb(callback: CallbackQuery):
 
 @callback_router.callback_query(F.data == 'vless')
 async def trial_vless_cb(callback: CallbackQuery):
-    link = await marzhapi.crate_user(callback.from_user.id)
     text = '🪐 Подключение к VPN:' \
            '\n' \
-           f'\n<code>{link}</code>' \
+           f'\n<code>{SUB_URL}/{encode(callback.from_user.id)}</code>' \
            '\n👆 Нажмите (тапните) чтобы скопировать и добавьте в приложение' \
            '\n' \
            '\nЕсли приложение уже установлено - воспользуйтесь <b>быстрым подключением</b>' \
