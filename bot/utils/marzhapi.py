@@ -29,12 +29,6 @@ async def get_panel_and_token():
         logging.error(f"Failed to get token: {ex}")
         raise Exception(f"Failed to get token: {ex}")
 
-async def get_user_sub(user_id: int):
-    logging.info(f"Getting panel and token for user_id: {user_id}")
-    panel, token = await get_panel_and_token()
-    result = await panel.get_user(str(user_id), token=token)
-    logging.info(f"User subscription URL: {result.subscription_url}")
-    return f"{PANEL_URL}{result.subscription_url}"
 
 async def extend_expire(user_id:int, months):
     panel, token = await get_panel_and_token()

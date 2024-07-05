@@ -8,12 +8,23 @@ import logging
 from bot.utils.base64coding import decode
 from dotenv import load_dotenv
 
-from bot.utils.marzhapi import get_user_sub
+from bot.utils.marzhapi import get_panel_and_token
 
 load_dotenv('../.env')
 SUB_URL = os.getenv("SUB_URL")
+PANEL_URL= os.getenv("PANEL_URL")
+
 app = FastAPI()
 logging.basicConfig(level=logging.INFO)
+
+
+async def get_user_sub(user_id: int):
+    logging.info(f"Getting panel and token for user_id: {user_id}")
+    panel, token = await get_panel_and_token()
+    result = await panel.get_user(str(user_id), token=token)
+    logging.info(f"User subscription URL: {result.subscription_url}")
+    return f"{PANEL_URL}{result.subscription_url}"
+
 
 @app.get("/sub/{user_id}")
 async def redirect_user(user_id):
