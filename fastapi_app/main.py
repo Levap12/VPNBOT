@@ -1,48 +1,14 @@
-import os
 import logging
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import RedirectResponse
-from dotenv import load_dotenv
-from aiohttp.client_exceptions import ClientResponseError, ClientError, InvalidURL
-from marzpy import Marzban
 from bot.utils.base64coding import decode
+from bot.utils.marzhapi import get_user_sub
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
 
-# Загрузка переменных окружения
-load_dotenv('../.env')
-
-# Переменные окружения
-SUB_URL = os.getenv("SUB_URL")
-PANEL_URL = os.getenv("PANEL_URL")
-MARZH_LOGIN = os.getenv("MARZH_LOGIN")
-MARZH_PWD = os.getenv("MARZH_PWD")
-
-# Проверка переменных окружения
-logging.info(f"SUB_URL: {SUB_URL}")
-logging.info(f"PANEL_URL: {PANEL_URL}")
-logging.info(f"LOGIN: {MARZH_LOGIN}")
-logging.info(f"PASS: {MARZH_PWD}")
-
 app = FastAPI()
 
-async def get_panel_and_token():
-    panel = Marzban(MARZH_LOGIN, MARZH_PWD, PANEL_URL)
-    try:
-        token = await panel.get_token()
-        logging.info(f"Token received: {token}")
-        return panel, token
-    except (ClientError, InvalidURL, ClientResponseError) as ex:
-        logging.error(f"Failed to get token: {ex}")
-        raise Exception(f"Failed to get token: {ex}")
-
-async def get_user_sub(user_id: int):
-    logging.info(f"Getting panel and token for user_id: {user_id}")
-    panel, token = await get_panel_and_token()
-    result = await panel.get_user(str(user_id), token=token)
-    logging.info(f"User subscription URL: {result.subscription_url}")
-    return f"{PANEL_URL}{result.subscription_url}"
 
 @app.get("/sub/{user_id}")
 async def redirect_user(user_id):
