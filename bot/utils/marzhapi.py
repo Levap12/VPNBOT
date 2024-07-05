@@ -8,25 +8,32 @@ from aiohttp.client_exceptions import ClientResponseError,ClientError, InvalidUR
 from dotenv import load_dotenv
 import os
 from dateutil.relativedelta import relativedelta
+import logging
+
 
 load_dotenv('../.env')
 LOGIN = os.getenv("MARZH_LOGIN")
 PASS = os.getenv("MARZH_PWD")
 PANEL_URL = os.getenv("PANEL_URL")
 
+logging.basicConfig(level=logging.INFO)
 
 @cached(ttl=600)
 async def get_panel_and_token():
     panel = Marzban(LOGIN, PASS, PANEL_URL)
     try:
         token = await panel.get_token()
+        logging.info(f"Token received: {token}")
         return panel, token
     except (ClientError, InvalidURL) as ex:
+        logging.error(f"Failed to get token: {ex}")
         raise Exception(f"Failed to get token: {ex}")
 
-async def get_user_sub(user_id:int):
+async def get_user_sub(user_id: int):
+    logging.info(f"Getting panel and token for user_id: {user_id}")
     panel, token = await get_panel_and_token()
     result = await panel.get_user(str(user_id), token=token)
+    logging.info(f"User subscription URL: {result.subscription_url}")
     return f"{PANEL_URL}{result.subscription_url}"
 
 async def extend_expire(user_id:int, months):
