@@ -3,20 +3,30 @@ import os
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import RedirectResponse
 import httpx
+from aiohttp.client_exceptions import ClientResponseError,ClientError, InvalidURL
 import logging
-
+from marzpy import Marzban
 from bot.utils.base64coding import decode
 from dotenv import load_dotenv
 
-from bot.utils.marzhapi import get_panel_and_token
-
 load_dotenv('../.env')
 SUB_URL = os.getenv("SUB_URL")
-PANEL_URL= os.getenv("PANEL_URL")
+PANEL_URL = os.getenv("PANEL_URL")
+LOGIN = os.getenv("MARZH_LOGIN")
+PASS = os.getenv("MARZH_PWD")
 
 app = FastAPI()
 logging.basicConfig(level=logging.INFO)
 
+async def get_panel_and_token():
+    panel = Marzban(LOGIN, PASS, PANEL_URL)
+    try:
+        token = await panel.get_token()
+        logging.info(f"Token received: {token}")
+        return panel, token
+    except (ClientError, InvalidURL) as ex:
+        logging.error(f"Failed to get token: {ex}")
+        raise Exception(f"Failed to get token: {ex}")
 
 async def get_user_sub(user_id: int):
     logging.info(f"Getting panel and token for user_id: {user_id}")
