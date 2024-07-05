@@ -16,19 +16,19 @@ load_dotenv('../.env')
 # Переменные окружения
 SUB_URL = os.getenv("SUB_URL")
 PANEL_URL = os.getenv("PANEL_URL")
-LOGIN = os.getenv("MARZH_LOGIN")
-PASS = os.getenv("MARZH_PWD")
+MARZH_LOGIN = os.getenv("MARZH_LOGIN")
+MARZH_PWD = os.getenv("MARZH_PWD")
 
 # Проверка переменных окружения
 logging.info(f"SUB_URL: {SUB_URL}")
 logging.info(f"PANEL_URL: {PANEL_URL}")
-logging.info(f"LOGIN: {LOGIN}")
-logging.info(f"PASS: {PASS}")
+logging.info(f"LOGIN: {MARZH_LOGIN}")
+logging.info(f"PASS: {MARZH_PWD}")
 
 app = FastAPI()
 
 async def get_panel_and_token():
-    panel = Marzban(LOGIN, PASS, PANEL_URL)
+    panel = Marzban(MARZH_LOGIN, MARZH_PWD, PANEL_URL)
     try:
         token = await panel.get_token()
         logging.info(f"Token received: {token}")
