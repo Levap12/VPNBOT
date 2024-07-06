@@ -18,7 +18,7 @@ def get_main_kb() -> InlineKeyboardMarkup:
     ikb = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text='🕹 Профиль', callback_data='profile'),InlineKeyboardButton(text='🛒 Купить VPN', callback_data='buyvpn')],
         [InlineKeyboardButton(text='🚀️ Подключится ', callback_data='vless')],
-        [InlineKeyboardButton(text='⚙️ Поддержка', url='https://t.me/sd_kfu')]
+        [InlineKeyboardButton(text='⚙️ Поддержка', url='https://t.me/NockVPN_support')]
     ])
     return ikb
 
