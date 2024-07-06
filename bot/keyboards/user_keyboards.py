@@ -82,6 +82,8 @@ def get_vless_con_kb() -> InlineKeyboardMarkup:
     # Главгвное меню
 
     ikb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text='для IOS(Iphone) 🍏', url='https://telegra.ph/Podklyuchenie-Streisand-07-06')],
+        [InlineKeyboardButton(text='для Android 🤖', url='https://telegra.ph/Podklyuchenie-v2rayNG-07-06')],
         [InlineKeyboardButton(text='Главное меню', callback_data='back_to_menu')]
     ])
     return ikb

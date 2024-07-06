@@ -149,15 +149,17 @@ async def trial_shadowsocks_cb(callback: CallbackQuery):
 async def trial_vless_cb(callback: CallbackQuery):
     text = '🪐 Подключение к VPN:' \
            '\n' \
-           f'\n<code>{SUB_URL}/{encode(callback.from_user.id)}</code>' \
-           '\n👆 Нажмите (тапните) чтобы скопировать и добавьте в приложение' \
+           '\nВаша ссылка:' \
+           f'\n└<code>{SUB_URL}/{encode(callback.from_user.id)}</code>' \
+           '\nНажмите (тапните) чтобы скопировать и добавьте в приложение' \
            '\n' \
            '\nЕсли приложение уже установлено - воспользуйтесь <b>быстрым подключением</b>' \
            '\n- <a href="https://apps.apple.com/us/app/streisand/id6450534064">Streisand</a> - для iOS 🍏' \
            '\n- <a href="https://play.google.com/store/apps/details?id=com.v2ray.ang">v2rayNG</a> - для Android 🤖' \
            '\n' \
-           '\n<a href="">iOS</a>' \
-           '\n<a href="">Android</a>' \
+           '\nПодключить в <b>1 клик!</b>' \
+           f'\n<a href="https://apps.artydev.ru/?url=streisand://import/{SUB_URL}/{encode(callback.from_user.id)}#Nock%20VPN">iOS</a>' \
+           f'\n<a href="https://apps.artydev.ru/?url=v2rayng://install-config?url={SUB_URL}/{encode(callback.from_user.id)}">Android</a>' \
            '\n' \
            '\n⭐️ Если у вас Android(v2rayNG) - нажмите в приложении "..." - Обновить подписку' \
            '\n' \
