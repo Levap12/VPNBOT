@@ -10,6 +10,7 @@ import asyncio
 callback_router = Router()
 from bot.utils.base64coding import encode
 from dotenv import load_dotenv
+from bot.utils.payment import create_payment
 
 load_dotenv('../.env')
 SUB_URL = os.getenv("SUB_URL")
@@ -92,6 +93,8 @@ async def buyvpn_cb(callback: CallbackQuery):
 
 
 async def handle_subscription(callback: CallbackQuery, months: int):
+    user_id = callback.from_user.id
+
     if months == 1:
         month_text = "месяц"
     elif 2 <= months <= 4:
@@ -99,11 +102,13 @@ async def handle_subscription(callback: CallbackQuery, months: int):
     else:
         month_text = "месяцев"
 
-    payment_url = f'https://payment.example.com/{months}_months'  # Замените на реальную ссылку
-    crypto_payment_url = f'https://crypto-payment.example.com/{months}_months'  # Замените на реальную ссылку
-
-    text = f'Доступ на {months} {month_text}'
-    await handle_message_edit(callback, text, user_keyboards.get_payment_kb(months, payment_url, crypto_payment_url))
+    payment_link, error = await create_payment(user_id, months)
+    if payment_link:
+        text = f'Доступ на {months} {month_text}'
+        crypto_payment_url = f'https://crypto-payment.example.com/{months}_months'  # Замените на реальную ссылку
+        await handle_message_edit(callback, text, user_keyboards.get_payment_kb(months, payment_link, crypto_payment_url))
+    else:
+        await callback.message.answer(f"Ошибка создания ссылки: {error}")
 
 
 @callback_router.callback_query(F.data.startswith('test_payment_'))

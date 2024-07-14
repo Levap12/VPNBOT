@@ -38,7 +38,7 @@ async def get_user_sub(user_id: int):
     return f"{PANEL_URL}{result.subscription_url}"
 
 
-async def extend_expire(user_id:int, months):
+async def extend_expire(user_id:int, months:int):
     panel, token = await get_panel_and_token()
     # Получить текущие данные пользователя
     user_data = await panel.get_user(str(user_id), token=token)
