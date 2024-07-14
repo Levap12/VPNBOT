@@ -48,7 +48,7 @@ async def payment(request: Request):
 # ae00-178-90-225-38.ngrok-free.app/payment?user_id=1546789&mounts=1
 
 
-@app.post("/payment/callback")
+@app.get("/payment/callback")
 async def payment_notify(request: Request):
     params = request.query_params
     unique_id = params.get('unique_id')
