@@ -1,3 +1,4 @@
+import json
 import os
 import aiohttp
 import hashlib
@@ -33,7 +34,7 @@ async def create_payment(user_id, months):
         'shop_id': SHOP_ID_TWP,
         'description': description,
         'user_ip': "0.0.0.0",
-        'additional': {"user_id":user_id,"months":months}
+        'additional': json.dumps({"user_id": user_id, "months": months})
     }
 
     async with aiohttp.ClientSession() as session:

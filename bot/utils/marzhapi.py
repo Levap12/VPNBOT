@@ -16,14 +16,15 @@ LOGIN = os.getenv("MARZH_LOGIN")
 PASS = os.getenv("MARZH_PWD")
 PANEL_URL = os.getenv("PANEL_URL")
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 @cached(ttl=600)
 async def get_panel_and_token():
     panel = Marzban(LOGIN, PASS, PANEL_URL)
     try:
         token = await panel.get_token()
-        logging.info(f"Token received: {token}")
+        logging.debug(f"Token received: {token}")
         return panel, token
     except (ClientError, InvalidURL) as ex:
         logging.error(f"Failed to get token: {ex}")
@@ -31,49 +32,62 @@ async def get_panel_and_token():
 
 
 async def get_user_sub(user_id: int):
-    logging.info(f"Getting panel and token for user_id: {user_id}")
+    logging.debug(f"Getting panel and token for user_id: {user_id}")
     panel, token = await get_panel_and_token()
     result = await panel.get_user(str(user_id), token=token)
-    logging.info(f"User subscription URL: {result.subscription_url}")
+    logging.debug(f"User subscription URL: {result.subscription_url}")
     return f"{PANEL_URL}{result.subscription_url}"
 
 
-async def extend_expire(user_id:int, months:int):
-    panel, token = await get_panel_and_token()
-    # Получить текущие данные пользователя
-    user_data = await panel.get_user(str(user_id), token=token)
+async def extend_expire(user_id: int, months: int):
+    logger.debug(f"extend_expire called with user_id={user_id}, months={months}")
 
-    # Проверить текущий срок действия подписки
-    current_expire_timestamp = user_data.expire
-    if current_expire_timestamp is None:
-        current_expire_time = datetime.utcnow()
-    else:
-        current_expire_time = datetime.utcfromtimestamp(current_expire_timestamp)
-    now = datetime.utcnow()
+    try:
+        panel, token = await get_panel_and_token()
+        logger.debug(f"Got panel and token: panel={panel}, token={token}")
 
-    # Определить новую дату истечения срока действия
-    if current_expire_time < now:
-        # Если срок действия истек, прибавить месяцы от сегодняшнего дня
-        new_expire_time = now + relativedelta(months=months)
-        user_data.status = 'active'
-        user_data.data_limit = 0
-    else:
-        # Если срок действия еще активен, прибавить месяцы от текущего срока действия
-        new_expire_time = current_expire_time + relativedelta(months=months)
+        # Получить текущие данные пользователя
+        user_data = await panel.get_user(str(user_id), token=token)
+        logger.debug(f"Got user data: {user_data}")
 
-    new_expire_timestamp = int(new_expire_time.timestamp())
+        # Проверить текущий срок действия подписки
+        current_expire_timestamp = user_data.expire
+        if current_expire_timestamp is None:
+            current_expire_time = datetime.utcnow()
+        else:
+            current_expire_time = datetime.utcfromtimestamp(current_expire_timestamp)
+        now = datetime.utcnow()
 
-    user = User(
-        username=user_data.username,  # Используйте текущее имя пользователя
-        proxies=user_data.proxies,  # Используйте текущие прокси данные
-        inbounds=user_data.inbounds,  # Используйте текущие входящие соединения
-        expire=new_expire_timestamp,  # Установить новую дату истечения срока действия
-        data_limit=user_data.data_limit,  # Используйте текущий лимит данных
-        status=user_data.status  # Используйте текущий статус пользователя
-    )
+        logger.debug(f"Current expire time: {current_expire_time}, now: {now}")
 
-    result = await panel.modify_user(str(user_id), token=token, user=user)
-    return result
+        # Определить новую дату истечения срока действия
+        if current_expire_time < now:
+            # Если срок действия истек, прибавить месяцы от сегодняшнего дня
+            new_expire_time = now + relativedelta(months=months)
+            user_data.status = 'active'
+            user_data.data_limit = 0
+        else:
+            # Если срок действия еще активен, прибавить месяцы от текущего срока действия
+            new_expire_time = current_expire_time + relativedelta(months=months)
+
+        new_expire_timestamp = int(new_expire_time.timestamp())
+        logger.debug(f"New expire time: {new_expire_time} (timestamp: {new_expire_timestamp})")
+
+        user = User(
+            username=user_data.username,  # Используйте текущее имя пользователя
+            proxies=user_data.proxies,  # Используйте текущие прокси данные
+            inbounds=user_data.inbounds,  # Используйте текущие входящие соединения
+            expire=new_expire_timestamp,  # Установить новую дату истечения срока действия
+            data_limit=user_data.data_limit,  # Используйте текущий лимит данных
+            status=user_data.status  # Используйте текущий статус пользователя
+        )
+
+        result = await panel.modify_user(str(user_id), token=token, user=user)
+        logger.debug(f"User modified successfully: {result}")
+        return result
+    except Exception as e:
+        logger.error(f"Error in extend_expire: {e}", exc_info=True)
+        raise
 
 
 async def crate_user(user_id: int):

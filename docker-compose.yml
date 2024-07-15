@@ -21,6 +21,6 @@ services:
     volumes:
       - .:/app
     ports:
-      - "3050:8000"
+      - "3050:3050"
     env_file:
       - .env
