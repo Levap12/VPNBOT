@@ -5,7 +5,11 @@ import hashlib
 from dotenv import load_dotenv
 import datetime
 import aioredis
+import logging
 load_dotenv('../.env')
+
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 TOKEN_TWP = os.getenv("TOKEN_TWP")
 SHOP_ID_TWP = os.getenv("SHOP_ID_TWP")
@@ -14,39 +18,56 @@ API_URL = 'https://techwhizpay.ru/api/createOrder'
 
 
 async def create_payment(user_id, months):
-    redis = await get_redis_connection()
-    link_id = f"{user_id}_{months}"
-    payment_link = await redis.get(link_id)
+    logger.debug(f"create_payment called with user_id={user_id}, months={months}")
 
-    if payment_link:
-        return payment_link, None
+    try:
+        redis = await get_redis_connection()
+        logger.debug("Connected to Redis")
 
-    unique_id = generate_unique_id()
-    amount, description = get_amount_and_description(months)
+        link_id = f"{user_id}_{months}"
+        payment_link = await redis.get(link_id)
 
-    if amount is None:
-        return None, "Invalid months value"
+        if payment_link:
+            logger.debug(f"Found existing payment link: {payment_link}")
+            return payment_link, None
 
-    params = {
-        'token': TOKEN_TWP,
-        'unique_id': unique_id,
-        'amount': amount,
-        'shop_id': SHOP_ID_TWP,
-        'description': description,
-        'user_ip': "0.0.0.0",
-        'additional': json.dumps({"user_id": user_id, "months": months})
-    }
+        unique_id = generate_unique_id()
+        logger.debug(f"Generated unique_id: {unique_id}")
 
-    async with aiohttp.ClientSession() as session:
-        async with session.post(API_URL, data=params) as response:
-            result = await response.json()
+        amount, description = get_amount_and_description(months)
+        logger.debug(f"Got amount and description: amount={amount}, description={description}")
 
-    if result['data']['error'] == 0:
-        link = result['data']['link']
-        await redis.set(link_id, link, ex=3600)
-        return link, None
-    else:
-        return None, result['data']['message']
+        if amount is None:
+            logger.error("Invalid months value")
+            return None, "Invalid months value"
+
+        params = {
+            'token': TOKEN_TWP,
+            'unique_id': unique_id,
+            'amount': amount,
+            'shop_id': SHOP_ID_TWP,
+            'description': description,
+            'user_ip': "0.0.0.0",
+            'additional': json.dumps({"user_id": user_id, "months": months})
+        }
+        logger.debug(f"Payment parameters: {params}")
+
+        async with aiohttp.ClientSession() as session:
+            async with session.post(API_URL, data=params) as response:
+                result = await response.json()
+                logger.debug(f"Received response: {result}")
+
+        if result['data']['error'] == 0:
+            link = result['data']['link']
+            await redis.set(link_id, link, ex=3600)
+            logger.debug(f"Payment link created and saved in Redis: {link}")
+            return link, None
+        else:
+            logger.error(f"Error in payment creation: {result['data']['message']}")
+            return None, result['data']['message']
+    except Exception as e:
+        logger.error(f"Error in create_payment: {e}", exc_info=True)
+        raise
 
 
 def generate_unique_id():
