@@ -91,31 +91,44 @@ async def extend_expire(user_id: int, months: int):
 
 
 async def crate_user(user_id: int):
-    panel, token = await get_panel_and_token()
-    expire_time = datetime.utcnow() + timedelta(days=3)  # Установка времени истечения срока действия на 1 день
-    expire_timestamp = int(expire_time.timestamp())
-    user = User(
-        username=str(user_id),  # Задайте уникальное имя пользователя
-        proxies={
-            "vless": {}
-        },
-        inbounds={"vless": ["VLESS TCP REALITY"]},  # Установка входящих соединений для Shadowsocks
-        expire=expire_timestamp,  # Установка времени истечения срока действия
-        data_limit=1024*1024*1024*25,  # Установка лимита данных, если необходимо
-        data_limit_reset_strategy="no_reset",  # Стратегия сброса лимита данных
-        status="active"  # Статус пользователя
-    )
+    logger.debug(f"crate_user called with user_id={user_id}")
+
     try:
+        panel, token = await get_panel_and_token()
+        logger.debug("Got panel and token")
+
+        expire_time = datetime.utcnow() + timedelta(days=3)  # Установка времени истечения срока действия на 3 дня
+        expire_timestamp = int(expire_time.timestamp())
+        user = User(
+            username=str(user_id),  # Задайте уникальное имя пользователя
+            proxies={
+                "vless": {}
+            },
+            inbounds={"vless": ["VLESS TCP REALITY"]},  # Установка входящих соединений для Shadowsocks
+            expire=expire_timestamp,  # Установка времени истечения срока действия
+            data_limit=1024*1024*1024*25,  # Установка лимита данных, если необходимо
+            data_limit_reset_strategy="no_reset",  # Стратегия сброса лимита данных
+            status="active"  # Статус пользователя
+        )
+        logger.debug(f"Created user object: {user}")
+
         result = await panel.add_user(user=user, token=token)
+        logger.debug(f"User added successfully: {result.links[0]}")
         print(result.links[0])
         return result.links[0]
     except ClientResponseError as e:
+        logger.error(f"ClientResponseError occurred: {e}", exc_info=True)
         if e.status == 409:
+            logger.debug("User already exists, fetching existing user data")
             result = await panel.get_user(str(user_id), token=token)
+            logger.debug(f"Fetched existing user data: {result.subscription_url}")
             print(result.subscription_url)
             return f"{PANEL_URL}{result.subscription_url}"
         else:
             raise e
+    except Exception as e:
+        logger.error(f"An unexpected error occurred: {e}", exc_info=True)
+        raise
 
 
 async def get_user_info(user_id):
