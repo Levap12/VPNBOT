@@ -17,7 +17,7 @@ services:
     build:
       context: .
     container_name: fastapi
-    command: uvicorn fastapi_app.main:app --host 0.0.0.0 --port 8000
+    command: uvicorn fastapi_app.main:app --host 0.0.0.0 --port 3050
     volumes:
       - .:/app
     ports:
