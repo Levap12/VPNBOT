@@ -132,33 +132,46 @@ async def crate_user(user_id: int):
 
 
 async def get_user_info(user_id):
-    panel, token = await get_panel_and_token()
-    user_data = await panel.get_user(str(user_id), token=token)
+    logger.debug(f"get_user_info called with user_id={user_id}")
 
-    # Статус подписки
-    subscription_status = user_data.status
+    try:
+        panel, token = await get_panel_and_token()
+        logger.debug("Got panel and token")
 
-    # Дата окончания подписки
-    expire_timestamp = user_data.expire
+        user_data = await panel.get_user(str(user_id), token=token)
+        logger.debug(f"Got user data: {user_data}")
 
-    if expire_timestamp is None:
-        # Если подписка бесконечна
-        expire_formatted = "∞"
-        remaining_days = "∞"  # или другое значение, чтобы обозначить бесконечность
-    else:
-        # Если подписка имеет срок окончания
-        expire_date = datetime.utcfromtimestamp(expire_timestamp)
-        expire_formatted = expire_date.strftime('%d.%m.%Y')
+        # Статус подписки
+        subscription_status = user_data.status
 
-        # Осталось дней
-        now = datetime.utcnow()
-        remaining_days = (expire_date - now).days if expire_date > now else 0
+        # Дата окончания подписки
+        expire_timestamp = user_data.expire
 
-    return {
-        "subscription_status": subscription_status,
-        "remaining_days": remaining_days,
-        "expire_date": expire_formatted
-    }
+        if expire_timestamp is None:
+            # Если подписка бесконечна
+            expire_formatted = "∞"
+            remaining_days = "∞"  # или другое значение, чтобы обозначить бесконечность
+        else:
+            # Если подписка имеет срок окончания
+            expire_date = datetime.utcfromtimestamp(expire_timestamp)
+            expire_formatted = expire_date.strftime('%d.%m.%Y')
+
+            # Осталось дней
+            now = datetime.utcnow()
+            remaining_days = (expire_date - now).days if expire_date > now else 0
+
+        result = {
+            "subscription_status": subscription_status,
+            "remaining_days": remaining_days,
+            "expire_date": expire_formatted
+        }
+
+        logger.debug(f"Returning result: {result}")
+        return result
+
+    except Exception as e:
+        logger.error(f"Error in get_user_info: {e}", exc_info=True)
+        raise
 
 
 # async def main():
