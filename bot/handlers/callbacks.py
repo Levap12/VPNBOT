@@ -152,6 +152,7 @@ async def trial_shadowsocks_cb(callback: CallbackQuery):
 
 @callback_router.callback_query(F.data == 'vless')
 async def trial_vless_cb(callback: CallbackQuery):
+    await marzhapi.crate_user(callback.from_user.id)
     text = '🪐 Подключение к VPN:' \
            '\n' \
            '\nВаша ссылка:' \
