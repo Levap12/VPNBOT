@@ -13,7 +13,7 @@ async def cmd_start(message: Message):
                 '\nЯ подключу вас к VPN за пару простых шагов.' \
                 '\nПопробуй бесплатно 72 часа самый быстрый VPN в Европе.' \
                 '\nЖми 🔌Подключиться ниже в меню и я помогу настроить VPN на любом устройстве за 2 минуты.\n'
-
+    await marzhapi.crate_user(message.from_user.id)
     await message.answer(
         text=main_menu,
         reply_markup=get_first_start_kb(), parse_mode='HTML'
