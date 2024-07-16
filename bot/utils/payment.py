@@ -78,7 +78,7 @@ def generate_unique_id():
 
 def get_amount_and_description(mounts):
     if mounts == 1:
-        return 50, "NockVPN 1 месяц"
+        return 190, "NockVPN 1 месяц"
     elif mounts == 3:
         return 500, "NockVPN 3 месяца"
     elif mounts == 6:
