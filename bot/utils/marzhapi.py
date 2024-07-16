@@ -64,11 +64,12 @@ async def extend_expire(user_id: int, months: int):
         if current_expire_time < now:
             # Если срок действия истек, прибавить месяцы от сегодняшнего дня
             new_expire_time = now + relativedelta(months=months)
-            user_data.status = 'active'
-            user_data.data_limit = 0
         else:
             # Если срок действия еще активен, прибавить месяцы от текущего срока действия
             new_expire_time = current_expire_time + relativedelta(months=months)
+
+        user_data.status = 'active'
+        user_data.data_limit = 0
 
         new_expire_timestamp = int(new_expire_time.timestamp())
         logger.debug(f"New expire time: {new_expire_time} (timestamp: {new_expire_timestamp})")
