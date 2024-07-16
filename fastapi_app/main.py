@@ -1,6 +1,9 @@
 import logging
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import RedirectResponse
+from aiogram import Bot
+from dotenv import load_dotenv
+import os
 
 from bot.utils.base64coding import decode
 from bot.utils.marzhapi import get_user_sub
@@ -11,8 +14,12 @@ import aioredis
 import json
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = FastAPI()
+load_dotenv('../.env')
+TOKEN_TG = os.getenv("TOKEN_TG")
+bot = Bot(token=TOKEN_TG)
 
 
 @app.get("/sub/{user_id}")
@@ -71,6 +78,11 @@ async def payment_notify(request: Request):
             months = additional_data.get('months')
             if user_id and months:
                 await extend_expire(user_id, months)
+                try:
+                    await bot.send_message(user_id, "Поздравляем вы обладатель подписки NockVPN ")
+                    logger.info(f"Message sent to chat_id={user_id}")
+                except Exception as e:
+                    logger.error(f"Failed to send message: {e}", exc_info=True)
             else:
                 logging.error(f"Invalid additional data: {additional}")
                 raise HTTPException(status_code=400, detail="Invalid additional data")
