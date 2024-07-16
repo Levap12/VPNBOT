@@ -72,7 +72,7 @@ async def create_payment(user_id, months):
 
 def generate_unique_id():
     now = datetime.datetime.now()
-    unique_id = now.strftime("%d%m%y%H%M")
+    unique_id = now.strftime("%d%m%y%H%M%S")
     return unique_id
 
 
