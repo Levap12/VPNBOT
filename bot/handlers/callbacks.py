@@ -52,7 +52,7 @@ async def profile_cb(callback: CallbackQuery):
 
     if user_info["subscription_status"] == 'active':
         sub_status = "✅ Активна"
-    elif user_info["subscription_status"] == 'disabled':
+    elif user_info["subscription_status"] == 'disabled' or 'expired':
         sub_status = "❌ Не активна"
 
     else:
@@ -102,14 +102,19 @@ async def handle_subscription(callback: CallbackQuery, months: int):
     else:
         month_text = "месяцев"
 
-    payment_link, error = await create_payment(user_id, months)
-    if payment_link:
-        text = f'Доступ на {months} {month_text}'
-        crypto_payment_url = f'https://crypto-payment.example.com/{months}_months'  # Замените на реальную ссылку
-        await handle_message_edit(callback, text, user_keyboards.get_payment_kb(months, payment_link, crypto_payment_url))
-    else:
-        await callback.message.answer(f"Ошибка создания ссылки: {error}")
-
+    text = f'ℹ️ Доступ на {months} {month_text}. ' \
+           f'Оплата переводом на Т-Банк' \
+           f'\n\n❗️Для оплаты напишите оператору 👇'
+    payment_link = "https://t.me/NockVPN_support"
+    await handle_message_edit(callback, text, user_keyboards.get_payment_kb(months, payment_link, None))
+    # payment_link, error = await create_payment(user_id, months)
+    # if payment_link:
+    #     text = f'Доступ на {months} {month_text}'
+    #     crypto_payment_url = f'https://crypto-payment.example.com/{months}_months'  # Замените на реальную ссылку
+    #     await handle_message_edit(callback, text, user_keyboards.get_payment_kb(months, payment_link, crypto_payment_url))
+    # else:
+    #     await callback.message.answer(f"Ошибка создания ссылки: {error}")
+    # await callback.message.answer(f'Для оплаты обратитесь в <a href="https://t.me/NockVPN_support">поддержку</a>', parse_mode='HTML')
 
 @callback_router.callback_query(F.data.startswith('test_payment_'))
 async def test_payment_cb(callback: CallbackQuery):

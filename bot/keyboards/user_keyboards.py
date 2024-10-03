@@ -54,7 +54,7 @@ def get_buyvpn_kb() -> InlineKeyboardMarkup:
 
 def get_payment_kb(months: int, payment_url: str, crypto_payment_url: str) -> InlineKeyboardMarkup:
     ikb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text='🏦 СБП/MIR/VISA/MC', url=payment_url)],
+        [InlineKeyboardButton(text='✍ Написать', url=payment_url)],
         [InlineKeyboardButton(text='Назад', callback_data='back_to_menu')]
     ])
     return ikb
