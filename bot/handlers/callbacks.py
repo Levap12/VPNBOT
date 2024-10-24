@@ -188,11 +188,11 @@ async def send_video(callback: types.CallbackQuery):
         # Словарь с параметрами для разных платформ
         video_data = {
             'video_ios': {
-                'file_id': 'BAACAgIAAxkBAAMiZxj65u4ZxQldw3Sxg3H7KxL2-v0AAvJVAAJcmMlIyZHuytJiyn82BA',
+                'file_id': 'BAACAgQAAxkBAAIBOmcaHKmob-v6srPRPIM16-Il2YYmAAIkGAACmHxpUHQBCLbNDQn9NgQ',
                 'caption': "Видео инструкция для IOS 🍏"
             },
             'video_mac': {
-                'file_id': 'BAACAgIAAxkBAAOUZxkqZ2jpxHsKMUDecCEHz3tl-D0AAgJZAAJcmMlIUFQ-ihZ_Xrc2BA',
+                'file_id': 'BAACAgQAAxkBAAIBPWcaHRElJOlM15LVME9Sa2w5X1MyAALbFQACmr6wUHidqln6cqO-NgQ',
                 'caption': "Видео инструкция для mac OS"
             },
             'video_win': {
