@@ -60,6 +60,13 @@ def get_payment_kb(months: int, payment_url: str, crypto_payment_url: str) -> In
     return ikb
 
 
+def get_support_kb() -> InlineKeyboardMarkup:
+    ikb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text='✍ Написать', url='https://t.me/NockVPN_support')],
+        [InlineKeyboardButton(text='Меню', callback_data='back_to_menu')]
+    ])
+    return ikb
+
 
 def get_connect_kb() -> InlineKeyboardMarkup:
     ikb = InlineKeyboardMarkup(inline_keyboard=[
@@ -79,9 +86,15 @@ def get_connected_kb() -> InlineKeyboardMarkup:
 def get_vless_con_kb() -> InlineKeyboardMarkup:
     # Главгвное меню
 
+    # ikb = InlineKeyboardMarkup(inline_keyboard=[
+    #     [InlineKeyboardButton(text='для IOS(Iphone) 🍏', callback_data='video_ios'),InlineKeyboardButton(text='для Android 🤖', callback_data='video_android')],
+    #     [InlineKeyboardButton(text='для mac OS 🍏', callback_data='video_mac'),
+    #      InlineKeyboardButton(text='для Windows 💻', callback_data='video_win')],
+    #     [InlineKeyboardButton(text='Главное меню', callback_data='back_to_menu')]
+    # ])
     ikb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text='для IOS(Iphone) 🍏', url='https://telegra.ph/Podklyuchenie-Streisand-07-06')],
-        [InlineKeyboardButton(text='для Android 🤖', url='https://telegra.ph/Podklyuchenie-v2rayNG-07-06')],
+        [InlineKeyboardButton(text='для IOS(Iphone) 🍏', callback_data='video_ios'), InlineKeyboardButton(text='для Android 🤖', callback_data='video_android')],
+        [InlineKeyboardButton(text='для mac OS 🍏', callback_data='video_mac')],
         [InlineKeyboardButton(text='Главное меню', callback_data='back_to_menu')]
     ])
     return ikb

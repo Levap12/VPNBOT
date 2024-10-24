@@ -1,10 +1,7 @@
-from aiogram import F, Router
-from aiogram.filters import CommandStart,Command
+from aiogram import F, Router, types
 from aiogram.types import Message, CallbackQuery
 from bot.keyboards import user_keyboards
-from bot.handlers.user_handlers import cmd_start
 import os
-from datetime import datetime, timedelta
 from bot.utils import marzhapi
 import asyncio
 callback_router = Router()
@@ -175,6 +172,64 @@ async def trial_vless_cb(callback: CallbackQuery):
            '\n' \
            '\nПосмотреть подробную инструкцию 👇'
     await handle_message_edit(callback, text, user_keyboards.get_vless_con_kb())
+
+
+@callback_router.message(F.content_type == 'video')
+async def get_file_id(message: types.Message):
+    # Получаем file_id отправленного видео
+    file_id = message.video.file_id
+    await message.reply(f"Ваш file_id: {file_id}")
+
+
+# Обработчик callback-запросов для отправки видео
+@callback_router.callback_query(lambda callback: callback.data in ['video_ios', 'video_mac', 'video_win', 'video_android'])
+async def send_video(callback: types.CallbackQuery):
+    try:
+        # Словарь с параметрами для разных платформ
+        video_data = {
+            'video_ios': {
+                'file_id': 'BAACAgIAAxkBAAMiZxj65u4ZxQldw3Sxg3H7KxL2-v0AAvJVAAJcmMlIyZHuytJiyn82BA',
+                'caption': "Видео инструкция для IOS 🍏"
+            },
+            'video_mac': {
+                'file_id': 'BAACAgIAAxkBAAOUZxkqZ2jpxHsKMUDecCEHz3tl-D0AAgJZAAJcmMlIUFQ-ihZ_Xrc2BA',
+                'caption': "Видео инструкция для mac OS"
+            },
+            'video_win': {
+                'file_id': 'BAACAgIAAxkBAAMiZxj65u4ZxQldw3Sxg3H7KxL2-v0AAvJVAAJcmMlIyZHuytJiyn82BA',
+                'caption': "Видео инструкция для Windows"
+            },
+            'video_android': {
+                'file_id': 'BAACAgIAAxkBAAMiZxj65u4ZxQldw3Sxg3H7KxL2-v0AAvJVAAJcmMlIyZHuytJiyn82BA',
+                'caption': "Видео инструкция для Android"
+            }
+        }
+
+        # Получаем параметры в зависимости от платформы
+        video_info = video_data.get(callback.data, {})
+        file_id = video_info.get('file_id')
+        caption = video_info.get('caption', "Видео инструкция")
+
+        # Клавиатура для всех платформ одинакова
+        keyboard = user_keyboards.get_support_kb()
+
+        # Отправляем видео
+        if file_id:
+            await callback.message.answer_video(
+                video=file_id,
+                caption=caption
+            )
+
+            # Отправляем текст с клавиатурой после видео
+            await callback.message.answer(
+                text='🌐 Проблемы с подключением ???\n\n❗️Напишите оператору, мы работаем 24/7 👇',
+                reply_markup=keyboard
+            )
+        else:
+            await callback.message.answer("Не удалось найти видео для выбранной платформы.")
+
+    except Exception as e:
+        await callback.message.answer(f"Ошибка при отправке: {str(e)}")
 
 
 
