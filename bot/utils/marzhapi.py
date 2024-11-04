@@ -114,19 +114,32 @@ async def crate_user(user_id: int):
         logger.debug(f"Created user object: {user}")
 
         result = await panel.add_user(user=user, token=token)
-        logger.debug(f"User added successfully: {result.links[0]}")
-        print(result.links[0])
-        return result.links[0]
+        logger.info(f"User added successfully: {result.links[0]}")
+        # print(result.links[0])
+        return {
+            "status": "ok",
+            "data": {
+                "link": result.links[0]
+            }
+        }
     except ClientResponseError as e:
         logger.error(f"ClientResponseError occurred: {e}", exc_info=True)
         if e.status == 409:
             logger.debug("User already exists, fetching existing user data")
             result = await panel.get_user(str(user_id), token=token)
             logger.debug(f"Fetched existing user data: {result.subscription_url}")
-            print(result.subscription_url)
-            return f"{PANEL_URL}{result.subscription_url}"
+            # print(result.subscription_url)
+            return {
+                "status": "exists",
+                "data": {
+                    "link": f"{PANEL_URL}{result.subscription_url}"
+                }
+            }
         else:
-            raise e
+            return {
+                "status": "error",
+                "message": f"ClientResponseError: {str(e)}"
+            }
     except Exception as e:
         logger.error(f"An unexpected error occurred: {e}", exc_info=True)
         raise
