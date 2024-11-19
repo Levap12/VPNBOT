@@ -7,17 +7,37 @@ def get_first_start_kb() -> InlineKeyboardMarkup:
     # Главгвное меню
 
     ikb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text='🔌 Подключиться', callback_data='vless')]
+        [InlineKeyboardButton(text='🔌 Подключиться', callback_data='chose_device')]
     ])
     return ikb
 
+def get_chose_device_kb() -> InlineKeyboardMarkup:
+    # Главгвное меню
+
+    ikb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text='📲 iPhone', callback_data='device_iphone')],
+        [InlineKeyboardButton(text='🤖 Android', callback_data='device_android')],
+        [InlineKeyboardButton(text='💻 Windows', callback_data='device_windows')],
+        [InlineKeyboardButton(text='🍏 MacOS', callback_data='device_macos')],
+    ])
+    return ikb
+
+def get_device_kb(download_url:str ,connect_url:str) -> InlineKeyboardMarkup:
+    # Главгвное
+
+    ikb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text='🌐 Скачать приложение ', url=download_url)],
+        [InlineKeyboardButton(text='🚀 Подлючиться ', url=connect_url)],
+        [InlineKeyboardButton(text='💠 Меню', callback_data='back_to_menu')]
+    ])
+    return ikb
 
 def get_main_kb() -> InlineKeyboardMarkup:
     # Главгвное меню
 
     ikb = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text='🕹 Профиль', callback_data='profile'),InlineKeyboardButton(text='🛒 Купить VPN', callback_data='buyvpn')],
-        [InlineKeyboardButton(text='🚀️ Подключится ', callback_data='vless')],
+        [InlineKeyboardButton(text='🚀️ Подключится ', callback_data='chose_device')],
         [InlineKeyboardButton(text='⚙️ Поддержка', url='https://t.me/NockVPN_support')]
     ])
     return ikb

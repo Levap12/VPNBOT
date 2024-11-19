@@ -151,6 +151,51 @@ async def trial_shadowsocks_cb(callback: CallbackQuery):
            'Рекомендуем Vless'
     await handle_message_edit(callback, text, user_keyboards.get_connect_kb())
 
+@callback_router.callback_query(F.data == 'chose_device')
+async def chose_device(callback: CallbackQuery):
+    text = f'{callback.from_user.first_name}, выберите тип вашего устройства ниже 👇 чтобы увидеть инструкцию по подключению'
+    await handle_message_edit(callback, text, user_keyboards.get_chose_device_kb())
+
+@callback_router.callback_query(F.data.startswith('device_'))
+async def device_connect(callback: CallbackQuery):
+    device = callback.data.split('_')[-1]
+    user_id = callback.from_user.id
+
+    DEVICE_URLS = {
+        "iphone": {
+            "device": "iPhone",
+            "download_url": "https://app.hiddify.com/ios",
+            "connect_url": f"https://apps.artydev.ru/?url=hiddify://import/{SUB_URL}/{encode(user_id)}#Nock%20VPN",
+        },
+        "android": {
+            "device": "Android",
+            "download_url": "https://app.hiddify.com/play",
+            "connect_url": f"https://apps.artydev.ru/?url=hiddify://import/{SUB_URL}/{encode(user_id)}#Nock%20VPN",
+        },
+        "windows": {
+            "device": "Windows",
+            "download_url": "https://app.hiddify.com/windows",
+            "connect_url": f"https://apps.artydev.ru/?url=hiddify://import/{SUB_URL}/{encode(user_id)}#Nock%20VPN",
+        },
+        "macos": {
+            "device": "MacOS",
+            "download_url": "https://app.hiddify.com/mac",
+            "connect_url": f"https://apps.artydev.ru/?url=hiddify://import/{SUB_URL}/{encode(user_id)}#Nock%20VPN",
+        },
+        # Добавьте другие устройства здесь
+    }
+    urls = DEVICE_URLS[device]
+    text = f"Подлючкение к VPN для {urls['device']}" \
+           "\nВам нужно сделать всего 2 шага:" \
+           "\n\n1️⃣Скачайте и установите приложение перейдя по кнопке" \
+           "\n🌐Скачать приложение 👇" \
+           "\n\n2️⃣Нажимите на кнопку" \
+           "\n🚀Подлючиться 👇"
+
+
+    await handle_message_edit(callback, text, user_keyboards.get_device_kb(urls["download_url"], urls["connect_url"] ))
+
+
 
 @callback_router.callback_query(F.data == 'vless')
 async def trial_vless_cb(callback: CallbackQuery):
@@ -230,7 +275,6 @@ async def send_video(callback: types.CallbackQuery):
 
     except Exception as e:
         await callback.message.answer(f"Ошибка при отправке: {str(e)}")
-
 
 
 # /sub/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMTExMSIsImFjY2VzcyI6InN1YnNjcmlwdGlvbiIsImlhdCI6MTcxNjQwOTE0Nn0.0JnskQ2WHt_JEj6v5xUzD85-vjcHzi1eF92IyS4URug
