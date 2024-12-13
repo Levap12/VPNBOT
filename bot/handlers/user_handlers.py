@@ -9,7 +9,7 @@ command_router = Router()
 load_dotenv('../.env')
 
 token = os.getenv("TOKEN_TG")
-bot = Bot(token=token)#'7464437998:AAHovjFWytYVAwi8_qk2RnfyIXh2HxhM0pM')
+bot = Bot(token=token)
 
 @command_router.message(CommandStart())
 async def cmd_start(message: Message):

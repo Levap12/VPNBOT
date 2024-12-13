@@ -112,7 +112,6 @@ def check_ip(request: Request) -> bool:
 @app.post("/payment/callback")
 async def handle_webhook(request: Request):
     try:
-
         # Получаем тело запроса и подпись
         body = await request.body()
         signature = request.headers.get('x-signature', '')

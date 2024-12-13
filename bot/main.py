@@ -8,7 +8,6 @@ from aiogram.types import Update
 
 from handlers.user_handlers import command_router
 from handlers.callbacks import callback_router
-
 async def on_startup(app: web.Application):
     load_dotenv('../.env')
 
@@ -17,10 +16,9 @@ async def on_startup(app: web.Application):
     dp = Dispatcher()
     dp.include_router(command_router)
     dp.include_router(callback_router)
-
     # Установка вебхука
     webhook_url = os.getenv("WEBHOOK_URL")
-    await bot.set_webhook(webhook_url)
+    await bot.set_webhook(webhook_url + '/bot')
 
     app['bot'] = bot
     app['dp'] = dp
