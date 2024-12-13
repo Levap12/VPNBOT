@@ -117,9 +117,9 @@ async def handle_webhook(request: Request):
         signature = request.headers.get('x-signature', '')
 
         # Проверка IP-адреса
-        if not check_ip(request):
-            logger.error(f"Invalid IP address: {request.client.host}")
-            raise HTTPException(status_code=403, detail="Forbidden: Invalid IP address")
+        # if not check_ip(request):
+        #     logger.error(f"Invalid IP address: {request.client.host}")
+        #     raise HTTPException(status_code=403, detail="Forbidden: Invalid IP address")
 
         # Логируем полученные данные для отладки
         logger.debug(f"Received body: {body.decode('utf-8')}")
