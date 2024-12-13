@@ -74,7 +74,7 @@ def get_buyvpn_kb() -> InlineKeyboardMarkup:
 
 def get_payment_kb(payment_url: str, payment_transwer: str) -> InlineKeyboardMarkup:
     ikb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text='Оплатить', url=payment_url)],
+        # [InlineKeyboardButton(text='Оплатить', url=payment_url)],
         [InlineKeyboardButton(text='Оплата переводом', url=payment_transwer)],
         [InlineKeyboardButton(text='Назад', callback_data='back_to_menu')]
     ])

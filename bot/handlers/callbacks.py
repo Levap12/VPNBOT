@@ -103,9 +103,9 @@ async def handle_subscription(callback: CallbackQuery, months: int):
            f'Оплата переводом на Т-Банк' \
            f'\n\n❗️Для оплаты напишите оператору 👇'
     payment_transwer = "https://t.me/NockVPN_support"
-    get_payment_link = await create_payment(user_id,months)
-    payment_link = get_payment_link['url']
-    await handle_message_edit(callback, text, user_keyboards.get_payment_kb(payment_link, payment_transwer))
+    # get_payment_link = await create_payment(user_id,months)
+    # payment_link = get_payment_link['url']
+    await handle_message_edit(callback, text, user_keyboards.get_payment_kb(None, payment_transwer))
     # payment_link, error = await create_payment(user_id, months)
     # if payment_link:
     #     text = f'Доступ на {months} {month_text}'
