@@ -3,10 +3,6 @@ import asyncio
 from yookassa import Configuration
 from yookassa import Payment
 
-# from db.methods import add_yookassa_payment
-from bot.utils import goods
-# import glv
-
 YOOKASSA_SHOPID = '993088'
 YOOKASSA_TOKEN = 'test_dh02xu0bfdJqOKSSnwUXF6DxVONpOxuf0uZmKblWYv4'
 
