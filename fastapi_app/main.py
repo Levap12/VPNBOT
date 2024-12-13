@@ -66,7 +66,6 @@ async def payment(request: Request):
 
 
 # @app.get("/payment/callback")
-
 # async def payment_notify(request: Request):
 #     params = request.query_params
 #     unique_id = params.get('unique_id')
@@ -77,7 +76,7 @@ async def payment(request: Request):
 #
 #     logging.info(f"== unique_id: {unique_id}, sign: {sign}, amount: {amount}, status: {status}, additional: {additional}")
 #
-#     # Проверка корректности подписи
+#     # Провейцуйцурка корректности подписи
 #     if not await verify_sign(unique_id, amount, sign):
 #         raise HTTPException(status_code=400, detail="Invalid signature")
 #
