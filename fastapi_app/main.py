@@ -10,6 +10,7 @@ from bot.utils.marzhapi import get_user_sub
 from bot.utils.payment import verify_sign
 from bot.utils.marzhapi import extend_expire
 import aioredis
+from pydantic import BaseModel
 
 import json
 # Настройка логирования
@@ -20,7 +21,11 @@ app = FastAPI()
 load_dotenv('../.env')
 TOKEN_TG = os.getenv("TOKEN_TG")
 bot = Bot(token=TOKEN_TG)
+
 processed_payments = set()
+class PaymentData(BaseModel):
+    event: str
+    object: dict
 
 ALLOWED_IPS = [
     ip_network("185.71.76.0/27"),

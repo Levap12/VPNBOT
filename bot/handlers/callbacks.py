@@ -167,22 +167,22 @@ async def device_connect(callback: CallbackQuery):
         "iphone": {
             "device": "iPhone",
             "download_url": "https://app.hiddify.com/ios",
-            "connect_url": f"https://apps.artydev.ru/?url=hiddify://import/{SUB_URL}/{encode(user_id)}#Nock%20VPN",
+            "connect_url": f"https://app.nockserv.cloud/?url=hiddify://import/{SUB_URL}/{encode(user_id)}#Nock%20VPN",
         },
         "android": {
             "device": "Android",
             "download_url": "https://app.hiddify.com/play",
-            "connect_url": f"https://apps.artydev.ru/?url=hiddify://import/{SUB_URL}/{encode(user_id)}#Nock%20VPN",
+            "connect_url": f"https://app.nockserv.cloud/?url=hiddify://import/{SUB_URL}/{encode(user_id)}#Nock%20VPN",
         },
         "windows": {
             "device": "Windows",
             "download_url": "https://app.hiddify.com/windows",
-            "connect_url": f"https://apps.artydev.ru/?url=hiddify://import/{SUB_URL}/{encode(user_id)}#Nock%20VPN",
+            "connect_url": f"https://app.nockserv.cloud/?url=hiddify://import/{SUB_URL}/{encode(user_id)}#Nock%20VPN",
         },
         "macos": {
             "device": "MacOS",
             "download_url": "https://app.hiddify.com/mac",
-            "connect_url": f"https://apps.artydev.ru/?url=hiddify://import/{SUB_URL}/{encode(user_id)}#Nock%20VPN",
+            "connect_url": f"https://app.nockserv.cloud/?url=hiddify://import/{SUB_URL}/{encode(user_id)}#Nock%20VPN",
         },
         # Добавьте другие устройства здесь
     }
