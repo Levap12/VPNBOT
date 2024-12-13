@@ -65,42 +65,42 @@ async def payment(request: Request):
 # ae00-178-90-225-38.ngrok-free.app/payment?user_id=1546789&mounts=1
 
 
-@app.get("/payment/callback")
-async def payment_notify(request: Request):
-    params = request.query_params
-    unique_id = params.get('unique_id')
-    sign = params.get('sign')
-    amount = params.get('amount')
-    status = params.get('status')
-    additional = params.get('additional')
-
-    logging.info(f"== unique_id: {unique_id}, sign: {sign}, amount: {amount}, status: {status}, additional: {additional}")
-
-    # Проверка корректности подписи
-    if not await verify_sign(unique_id, amount, sign):
-        raise HTTPException(status_code=400, detail="Invalid signature")
-
-    # Обработка дополнительной информации
-    if additional:
-        try:
-            additional_data = json.loads(additional)
-            user_id = additional_data.get('user_id')
-            months = additional_data.get('months')
-            if user_id and months:
-                await extend_expire(user_id, months)
-                try:
-                    await bot.send_message(user_id, f"Подписка обновлена на {months} мес.")
-                    logger.info(f"Message sent to chat_id={user_id}")
-                except Exception as e:
-                    logger.error(f"Failed to send message: {e}", exc_info=True)
-            else:
-                logging.error(f"Invalid additional data: {additional}")
-                raise HTTPException(status_code=400, detail="Invalid additional data")
-        except json.JSONDecodeError:
-            logging.error(f"Invalid JSON format for additional: {additional}")
-            raise HTTPException(status_code=400, detail="Invalid JSON format for additional")
-
-    return {"message": "Payment processed successfully"}
+# @app.get("/payment/callback")
+# async def payment_notify(request: Request):
+#     params = request.query_params
+#     unique_id = params.get('unique_id')
+#     sign = params.get('sign')
+#     amount = params.get('amount')
+#     status = params.get('status')
+#     additional = params.get('additional')
+#
+#     logging.info(f"== unique_id: {unique_id}, sign: {sign}, amount: {amount}, status: {status}, additional: {additional}")
+#
+#     # Проверка корректности подписи
+#     if not await verify_sign(unique_id, amount, sign):
+#         raise HTTPException(status_code=400, detail="Invalid signature")
+#
+#     # Обработка дополнительной информации
+#     if additional:
+#         try:
+#             additional_data = json.loads(additional)
+#             user_id = additional_data.get('user_id')
+#             months = additional_data.get('months')
+#             if user_id and months:
+#                 await extend_expire(user_id, months)
+#                 try:
+#                     await bot.send_message(user_id, f"Подписка обновлена на {months} мес.")
+#                     logger.info(f"Message sent to chat_id={user_id}")
+#                 except Exception as e:
+#                     logger.error(f"Failed to send message: {e}", exc_info=True)
+#             else:
+#                 logging.error(f"Invalid additional data: {additional}")
+#                 raise HTTPException(status_code=400, detail="Invalid additional data")
+#         except json.JSONDecodeError:
+#             logging.error(f"Invalid JSON format for additional: {additional}")
+#             raise HTTPException(status_code=400, detail="Invalid JSON format for additional")
+#
+#     return {"message": "Payment processed successfully"}
 
 
 def check_ip(request: Request) -> bool:
@@ -109,7 +109,7 @@ def check_ip(request: Request) -> bool:
     logger.debug(f"Request IP: {ip}")
     return any(ip_address(ip) in network for network in ALLOWED_IPS)
 
-@app.post("/webhook")
+@app.post("/payment/callback")
 async def handle_webhook(request: Request):
     try:
         # Получаем тело запроса и подпись
