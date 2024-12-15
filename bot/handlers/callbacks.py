@@ -9,6 +9,12 @@ from bot.utils.base64coding import encode
 from dotenv import load_dotenv
 from bot.utils.yookassapay import create_payment
 
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
+
 load_dotenv('../.env')
 SUB_URL = os.getenv("SUB_URL")
 
@@ -162,6 +168,7 @@ async def chose_device(callback: CallbackQuery):
 async def device_connect(callback: CallbackQuery):
     device = callback.data.split('_')[-1]
     user_id = callback.from_user.id
+    vless_link = await marzhapi.get_user_vless_link(user_id)
 
     DEVICE_URLS = {
         "iphone": {
@@ -184,6 +191,7 @@ async def device_connect(callback: CallbackQuery):
             "download_url": "https://app.hiddify.com/mac",
             "connect_url": f"https://app.nockserv.cloud/?url=hiddify://import/{SUB_URL}/{encode(user_id)}#Nock%20VPN",
         },
+        # "connect_url": f"https://app.nockserv.cloud/?url=hiddify://import/{SUB_URL}/{encode(user_id)}#Nock%20VPN",
         # Добавьте другие устройства здесь
     }
     urls = DEVICE_URLS[device]
@@ -191,35 +199,36 @@ async def device_connect(callback: CallbackQuery):
            "\nВам нужно сделать всего 2 шага:" \
            "\n\n1️⃣Скачайте и установите приложение перейдя по кнопке" \
            "\n🌐Скачать приложение 👇" \
-           "\n\n2️⃣Нажимите на кнопку" \
-           "\n🚀Подлючиться 👇"
+           "\n\n2️⃣Нажмите на кнопку" \
+           "\n🚀Подключиться 👇" \
+           "\n\n🚨 <b>Если не работает кнопка ПОДКЛЮЧИТЬСЯ</b>" \
+           "\nНажмите <b>'Подключиться в ручную'</b> и следуйте инструкции"
 
 
     await handle_message_edit(callback, text, user_keyboards.get_device_kb(urls["download_url"], urls["connect_url"] ))
 
 
 
-@callback_router.callback_query(F.data == 'vless')
-async def trial_vless_cb(callback: CallbackQuery):
-    text = '🪐 Подключение к VPN:' \
-           '\n' \
-           '\nВаша ссылка:' \
-           f'\n└<code>{SUB_URL}/{encode(callback.from_user.id)}</code>' \
-           '\nНажмите (тапните) чтобы скопировать и добавьте в приложение' \
-           '\n' \
-           '\nЕсли приложение уже установлено - воспользуйтесь <b>быстрым подключением</b>' \
-           '\n- <a href="https://apps.apple.com/us/app/streisand/id6450534064">Streisand</a> - для iOS 🍏' \
-           '\n- <a href="https://play.google.com/store/apps/details?id=com.v2ray.ang">v2rayNG</a> - для Android 🤖' \
-           '\n' \
-           '\nПодключить в <b>1 клик!</b>' \
-           f'\n<a href="https://apps.artydev.ru/?url=streisand://import/{SUB_URL}/{encode(callback.from_user.id)}#Nock%20VPN">iOS</a>' \
-           f'\n<a href="https://apps.artydev.ru/?url=v2rayng://install-config?url={SUB_URL}/{encode(callback.from_user.id)}">Android</a>' \
-           '\n' \
-           '\n⭐️ Если у вас Android(v2rayNG) - нажмите в приложении "..." - Обновить подписку' \
-           '\n' \
-           '\nПосмотреть подробную инструкцию 👇'
-    await handle_message_edit(callback, text, user_keyboards.get_vless_con_kb())
+@callback_router.callback_query(F.data == 'handle_connect')
+async def handle_connect(callback: CallbackQuery):
+    logging.debug(f"handle_connect")
+    # try:
+    #     file_id = 'BAACAgQAAxkBAAIBOmcaHKmob-v6srPRPIM16-Il2YYmAAIkGAACmHxpUHQBCLbNDQn9NgQ'
+    #     await callback.message.answer_video(video=file_id)
+    # except:
+    #     await callback.message.answer(
+    #         text=f'Видео не найдено',
+    #         parse_mode='HTML'
+    #     )
 
+    await callback.message.answer(
+        text=f'<pre>{await marzhapi.get_user_vless_link(callback.from_user.id)}</pre>',
+        parse_mode='HTML'
+    )
+    await callback.message.answer(
+        text=f'Cкопируйте код ⬆️',
+        parse_mode='HTML'
+    )
 
 @callback_router.message(F.content_type == 'video')
 async def get_file_id(message: types.Message):

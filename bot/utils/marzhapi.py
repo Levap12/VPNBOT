@@ -187,6 +187,33 @@ async def get_user_info(user_id):
         logger.error(f"Error in get_user_info: {e}", exc_info=True)
         raise
 
+@cached(ttl=60)
+async def get_user_vless_link(user_id: int):
+    logging.debug(f"Getting VLESS link for user_id: {user_id}")
+
+    try:
+        # Получаем панель и токен
+        panel, token = await get_panel_and_token()
+        logging.debug("Got panel and token")
+
+        # Получаем данные о пользователе
+        user_data = await panel.get_user(str(user_id), token=token)
+        logging.debug(f"Got user data: {user_data}")
+        logging.debug(f"user_data.links: {user_data.links}")
+        # Проверяем наличие поля 'links' в объекте user_data
+        if user_data.links:
+            # Возвращаем первую ссылку из 'links'
+            vless_link = user_data.links[0]
+            logging.debug(f"User VLESS link: {vless_link}")
+            return vless_link
+        else:
+            # Если поле 'links' пустое или отсутствует
+            raise Exception("No VLESS link found in the user data.")
+
+    except Exception as e:
+        logging.error(f"Error during user VLESS link request: {str(e)}")
+        raise Exception(f"Error during user VLESS link request: {str(e)}")
+
 
 # async def main():
 #     result = await extend_expire("452398375",1)

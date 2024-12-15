@@ -28,6 +28,7 @@ def get_device_kb(download_url:str ,connect_url:str) -> InlineKeyboardMarkup:
     ikb = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text='🌐 Скачать приложение ', url=download_url)],
         [InlineKeyboardButton(text='🚀 Подлючиться ', url=connect_url)],
+        [InlineKeyboardButton(text='🛠️ Подключиться в ручную', callback_data='handle_connect')],
         [InlineKeyboardButton(text='💠 Меню', callback_data='back_to_menu')]
     ])
     return ikb

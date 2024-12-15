@@ -1,10 +1,14 @@
 import asyncio
+import os
 
 from yookassa import Configuration
 from yookassa import Payment
+from dotenv import load_dotenv
 
-YOOKASSA_SHOPID = '993088'
-YOOKASSA_TOKEN = 'test_dh02xu0bfdJqOKSSnwUXF6DxVONpOxuf0uZmKblWYv4'
+load_dotenv('../.env')
+
+YOOKASSA_SHOPID = os.getenv("YOOKASSA_SHOPID")
+YOOKASSA_TOKEN = os.getenv("YOOKASSA_TOKEN")
 
 if YOOKASSA_SHOPID and YOOKASSA_TOKEN:
     Configuration.configure(YOOKASSA_SHOPID, YOOKASSA_TOKEN)
