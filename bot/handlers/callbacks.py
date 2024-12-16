@@ -214,7 +214,7 @@ async def handle_connect(callback: CallbackQuery):
     logging.debug(f"handle_connect")
     try:
         file_id = 'BAACAgIAAxkBAAIENGdfcpe-YwalnUnsdYccYs7lCaOjAAIRawACqfD4Sjc2FMywxGXuNgQ'
-        await callback.message.answer_video(video=file_id)
+        await callback.message.answer_video(video=file_id,caption='Инструкция')
     except:
         await callback.message.answer(
             text=f'Видео не найдено',
