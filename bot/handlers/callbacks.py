@@ -212,14 +212,14 @@ async def device_connect(callback: CallbackQuery):
 @callback_router.callback_query(F.data == 'handle_connect')
 async def handle_connect(callback: CallbackQuery):
     logging.debug(f"handle_connect")
-    # try:
-    #     file_id = 'BAACAgQAAxkBAAIBOmcaHKmob-v6srPRPIM16-Il2YYmAAIkGAACmHxpUHQBCLbNDQn9NgQ'
-    #     await callback.message.answer_video(video=file_id)
-    # except:
-    #     await callback.message.answer(
-    #         text=f'Видео не найдено',
-    #         parse_mode='HTML'
-    #     )
+    try:
+        file_id = 'BAACAgIAAxkBAAIENGdfcpe-YwalnUnsdYccYs7lCaOjAAIRawACqfD4Sjc2FMywxGXuNgQ'
+        await callback.message.answer_video(video=file_id)
+    except:
+        await callback.message.answer(
+            text=f'Видео не найдено',
+            parse_mode='HTML'
+        )
 
     await callback.message.answer(
         text=f'<pre>{await marzhapi.get_user_vless_link(callback.from_user.id)}</pre>',
