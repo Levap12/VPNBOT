@@ -14,6 +14,8 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
+from bot.utils.logsdb import LogsDB
+logs_db = LogsDB()
 
 load_dotenv('../.env')
 SUB_URL = os.getenv("SUB_URL")
@@ -67,6 +69,7 @@ async def profile_cb(callback: CallbackQuery):
            f'└ Активна до: {user_info["expire_date"]}'#├└
 
     await handle_message_edit(callback, text, user_keyboards.get_profile_kb())
+    logs_db.log_action(callback.from_user.id, callback.from_user.username, f"Просмотр профиля - Подписка: {sub_status}")
 
 
 @callback_router.callback_query(F.data == 'back_to_menu')
@@ -80,6 +83,7 @@ async def back_to_main_cb(callback: CallbackQuery):
                 'Вы можете управлять ботом следующими командами:'
 
     await handle_message_edit(callback, main_menu, user_keyboards.get_main_kb())
+    logs_db.log_action(callback.from_user.id, callback.from_user.username, f"Просмотр меню")
 
 
 @callback_router.callback_query(F.data == 'buyvpn')
@@ -93,6 +97,7 @@ async def buyvpn_cb(callback: CallbackQuery):
 
 
     await handle_message_edit(callback, text, user_keyboards.get_buyvpn_kb())
+    logs_db.log_action(callback.from_user.id, callback.from_user.username, f"Просмотр купить")
 
 
 async def handle_subscription(callback: CallbackQuery, months: int):
@@ -109,9 +114,10 @@ async def handle_subscription(callback: CallbackQuery, months: int):
            f'Оплата переводом на Т-Банк' \
            f'\n\n❗️Для оплаты напишите оператору 👇'
     payment_transwer = "https://t.me/NockVPN_support"
-    # get_payment_link = await create_payment(user_id,months)
-    # payment_link = get_payment_link['url']
-    await handle_message_edit(callback, text, user_keyboards.get_payment_kb(None, payment_transwer))
+    get_payment_link = await create_payment(user_id,months)
+    payment_link = get_payment_link['url']
+    await handle_message_edit(callback, text, user_keyboards.get_payment_kb(payment_link, payment_transwer))
+    logs_db.log_action(callback.from_user.id, callback.from_user.username, f"Просмотр купить > {months} {month_text}")
     # payment_link, error = await create_payment(user_id, months)
     # if payment_link:
     #     text = f'Доступ на {months} {month_text}'
@@ -163,6 +169,7 @@ async def trial_shadowsocks_cb(callback: CallbackQuery):
 async def chose_device(callback: CallbackQuery):
     text = f'{callback.from_user.first_name}, выберите тип вашего устройства ниже 👇 чтобы увидеть инструкцию по подключению'
     await handle_message_edit(callback, text, user_keyboards.get_chose_device_kb())
+    logs_db.log_action(callback.from_user.id, callback.from_user.username, f"Просмотр Выбор устройства")
 
 @callback_router.callback_query(F.data.startswith('device_'))
 async def device_connect(callback: CallbackQuery):
@@ -206,6 +213,7 @@ async def device_connect(callback: CallbackQuery):
 
 
     await handle_message_edit(callback, text, user_keyboards.get_device_kb(urls["download_url"], urls["connect_url"] ))
+    logs_db.log_action(callback.from_user.id, callback.from_user.username, f"Подключение устройство {device}")
 
 
 
@@ -229,6 +237,8 @@ async def handle_connect(callback: CallbackQuery):
         text=f'Cкопируйте код ⬆️',
         parse_mode='HTML'
     )
+    logs_db.log_action(callback.from_user.id, callback.from_user.username, f"Ручное подключение")
+
 
 @callback_router.message(F.content_type == 'video')
 async def get_file_id(message: types.Message):

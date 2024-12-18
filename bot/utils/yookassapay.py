@@ -4,11 +4,17 @@ import os
 from yookassa import Configuration
 from yookassa import Payment
 from dotenv import load_dotenv
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 load_dotenv('../.env')
 
 YOOKASSA_SHOPID = os.getenv("YOOKASSA_SHOPID")
 YOOKASSA_TOKEN = os.getenv("YOOKASSA_TOKEN")
+
+# logging.debug(f"YOOKASSA_SHOPID {YOOKASSA_SHOPID} YOOKASSA_TOKEN: {YOOKASSA_TOKEN}")
 
 if YOOKASSA_SHOPID and YOOKASSA_TOKEN:
     Configuration.configure(YOOKASSA_SHOPID, YOOKASSA_TOKEN)
